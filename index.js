@@ -18,7 +18,9 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
+    writeConcern: { w: 'majority' },
+  
 });
 
 async function run() {
@@ -26,7 +28,16 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    // create collection and database
+    const coffeCollection = client.db('CoffeeDB').collection('Coffee');
 
+
+    app.post ('/coffee', async(req,res)=>{
+      const newCoffee = req.body;
+      console.log(newCoffee);
+      const result = await coffeCollection.insertOne(newCoffee);
+      res.send(result);
+    } )
 
     
     // Send a ping to confirm a successful connection
